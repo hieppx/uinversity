@@ -1,0 +1,833 @@
+---
+title: "University"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+# Importing libraries
+library(flexdashboard)
+library(tidyverse)
+library(highcharter)
+library(gt)
+library(htmltools)
+library(viridis)
+library(sqldf)
+```
+
+
+```{r , include=FALSE}
+# Importing data
+df2012 <- read_csv('data.csv')
+df2012 <- sqldf("SELECT * FROM df2012 WHERE year = 2012")
+#3:Làm sạch dữ liệu
+summary(df2012)  #summary data to check NA rows
+colSums(is.na(df2012)) #check NA value 
+
+#Replace NA value
+df2012$broad_impact[is.na(df2012$broad_impact)] <- signif(rowSums(df2012[c(3:9,11)])/8, digits = 1)
+summary(df2012)
+
+#Tạo biến mới average_rank
+df2012$average_rank <- signif(rowSums(df2012[c(3:11)])/9, digits = 3)
+calcScore2012 <- function() {
+  min <- min(df2012$average_rank)
+  score <- (100-(df2012$average_rank/min))
+  ifelse(score == 99,100,score)
+}
+#Tạo biến score và gán giá trị vào score
+df2012$score <- signif(calcScore2012(), digits = 4)
+df2012$world_rank <- c(1:nrow(df2012))
+
+```
+
+```{r , include=FALSE}
+
+# Importing data
+df2013 <- read_csv('data.csv')
+df2013 <- sqldf("SELECT * FROM df2013 WHERE year = 2013")
+#3:Làm sạch dữ liệu
+summary(df2013)  #summary data to check NA rows
+colSums(is.na(df2013)) #check NA value 
+
+#Replace NA value
+df2013$broad_impact[is.na(df2013$broad_impact)] <- signif(rowSums(df2013[c(3:9,11)])/8, digits = 1)
+summary(df2013)
+
+#Tạo biến mới average_rank
+df2013$average_rank <- signif(rowSums(df2012[c(3:11)])/9, digits = 3)
+calcScore2013 <- function() {
+  min <- min(df2013$average_rank)
+  score <- (100-(df2013$average_rank/min))
+  ifelse(score == 99,100,score)
+}
+#Tạo biến score và gán giá trị vào score
+df2013$score <- signif(calcScore2013(), digits = 4)
+df2013$world_rank <- c(1:nrow(df2013))
+
+```
+
+
+```{r , include=FALSE}
+
+# Importing data
+df2014 <- read_csv('data.csv')
+df2014 <- sqldf("SELECT * FROM df2014 WHERE year = 2014")
+#3:Làm sạch dữ liệu
+summary(df2014)  #summary data to check NA rows
+colSums(is.na(df2014)) #check NA value 
+
+#Replace NA value
+df2014$broad_impact[is.na(df2014$broad_impact)] <- signif(rowSums(df2014[c(3:9,11)])/8, digits = 1)
+summary(df2014)
+
+#Tạo biến mới average_rank
+df2014$average_rank <- signif(rowSums(df2012[c(3:11)])/9, digits = 3)
+calcScore2014 <- function() {
+  min <- min(df2014$average_rank)
+  score <- (100-(df2014$average_rank/min))
+  ifelse(score == 99,100,score)
+}
+#Tạo biến score và gán giá trị vào score
+df2014$score <- signif(calcScore2014(), digits = 4)
+df2014$world_rank <- c(1:nrow(df2014))
+
+```
+
+
+
+```{r , include=FALSE}
+
+# Importing data
+df2015 <- read_csv('data.csv')
+df2015 <- sqldf("SELECT * FROM df2015 WHERE year = 2015")
+#3:Làm sạch dữ liệu
+summary(df2015)  #summary data to check NA rows
+colSums(is.na(df2015)) #check NA value 
+
+#Replace NA value
+df2015$broad_impact[is.na(df2015$broad_impact)] <- signif(rowSums(df2015[c(3:9,11)])/8, digits = 1)
+summary(df2015)
+
+#Tạo biến mới average_rank
+df2015$average_rank <- signif(rowSums(df2012[c(3:11)])/9, digits = 3)
+calcScore2015 <- function() {
+  min <- min(df2015$average_rank)
+  score <- (100-(df2015$average_rank/min))
+  ifelse(score == 99,100,score)
+}
+#Tạo biến score và gán giá trị vào score
+df2015$score <- signif(calcScore2015(), digits = 4)
+df2015$world_rank <- c(1:nrow(df2015))
+
+```
+
+2012 {data-orientation=rows}
+=======================================================================
+
+Column {.tabset .tabset-fade data-width=30000}
+-----------------------------------------------------------------------
+
+
+### TABLE DATA {data-height=4000}
+
+```{r}
+# This is going to be a datatable
+data2012d<- sqldf("SELECT institution as [Institution], country as [Country], national_rank as [NationalRank], quality_of_education as [QualityOfEducation], quality_of_faculty as [QualityOfFaculty], publications as [Publications], influence as [Influence], citations as [Citations], broad_impact as [BroadImpact], patents as [Patents], average_rank as [AverageRank],  world_rank as [WorldRank], score as [Score] FROM df2012 ")
+
+data2012d <- data2012d %>% 
+  arrange(-desc(WorldRank)) %>% 
+  select(Institution, Country,NationalRank,QualityOfEducation,QualityOfFaculty,Publications,Influence, Citations, BroadImpact,Patents, AverageRank, WorldRank, Score)
+
+# HTML table
+div(style = 'height:600px; overflow-y:scroll', gt(data2012d) %>% 
+      opt_table_font(font = list(google_font('Chivo'), default_fonts())) %>% 
+      tab_style(location = cells_column_labels(columns = everything()),
+                style = list(cell_borders(sides = 'bottom', 
+                                          weight = px(2)), 
+                             cell_text(weight = 'bold'))) %>% 
+      tab_options(table.font.size = px(12L),
+                  table.border.top.style = 'none',
+                  column_labels.border.bottom.width = 2,
+                  table_body.border.top.style = 'none',
+                  data_row.padding = px(3))
+    )
+
+```
+
+
+### TOTAL SCHOOLS ON COUNTRY {data-height=4000}
+
+```{r fig.height=5}
+# Colors
+custom_colors <- viridis::mako(n = 16)
+
+data2012a<- sqldf("SELECT country as [Country], COUNT(country) as [NumberOfSchool] FROM df2012  GROUP BY country")
+data2012a %>% 
+  group_by(Country) %>% 
+  arrange(desc(NumberOfSchool)) %>% 
+  head(16) %>% 
+  hchart('column', hcaes(x = Country, y = NumberOfSchool,color = custom_colors)) %>%   hc_add_theme(hc_theme_google()) %>% 
+  hc_tooltip(pointFormat = '<b>Number of School: </b> {point.y} <br>')
+
+```
+
+
+### TOTAL PATENTS ON COUNTRY {data-height=4000} 
+
+```{r fig.height=5}
+# Colors
+custom_colors <- viridis::plasma(n = 16)
+
+
+data2012b<- sqldf("SELECT country as [Country], SUM(patents) as [TotalPatents] FROM df2012  GROUP BY country")
+data2012b %>% 
+  arrange(-desc(TotalPatents)) %>% 
+  head(16) %>% 
+  hchart('bar', hcaes(x = Country, y = TotalPatents, color = custom_colors)) %>% 
+  hc_add_theme(hc_theme_google()) %>% 
+  hc_tooltip(pointFormat = '<b>Number of TotalPatents: </b> {point.y} <br>')
+```
+
+### TOP 20 AVERAGE RANK OF SCHOOL {data-height=4000}
+
+```{r fig.height=5}
+# Colors
+custom_colors <- viridis::plasma(n = 20)
+
+data2012c<- sqldf("SELECT institution as [Institution], average_rank as [AverageRank] FROM df2012  GROUP BY institution")
+data2012c %>% 
+  arrange(-desc(AverageRank)) %>% 
+  head(20) %>% 
+  hchart('bar', hcaes(x = Institution, y = AverageRank, color = custom_colors)) %>% 
+  hc_add_theme(hc_theme_google()) %>% 
+  hc_tooltip(pointFormat = '<b>Average Rank: </b> {point.y} <br>') 
+
+```
+
+
+### TOP 20 WORLD RANK OF SCHOOL {data-height=4000}
+
+```{r fig.height=5}
+# Colors
+custom_colors <- viridis::plasma(n = 20)
+
+data2012h<- sqldf("SELECT institution as [Institution], world_rank as [WorldRank] FROM df2012  GROUP BY institution")
+data2012h %>% 
+  arrange(-desc(WorldRank)) %>% 
+  head(20) %>% 
+  hchart('bar', hcaes(x = Institution, y = WorldRank, color = custom_colors)) %>% 
+  hc_add_theme(hc_theme_google()) %>% 
+  hc_tooltip(pointFormat = '<b>World Rank: </b> {point.y} <br>') 
+
+```
+
+### TOP 20 SCORE OF SCHOOL {data-height=4000}
+
+```{r fig.height=5}
+# Colors
+custom_colors <- viridis::plasma(n = 20)
+
+data2012j<- sqldf("SELECT institution as [Institution], score as [Score] FROM df2012  GROUP BY institution")
+data2012j %>% 
+  arrange(-desc(Score)) %>% 
+  head(20) %>% 
+  hchart('bar', hcaes(x = Institution, y = Score, color = custom_colors)) %>% 
+  hc_add_theme(hc_theme_google()) %>% 
+  hc_tooltip(pointFormat = '<b>Score: </b> {point.y} <br>')
+
+```
+
+
+Column {data-width=10000}
+-----------------------------------------------------------------------
+
+### {.no-padding data-height=3300}
+
+
+```{r}
+
+# Colors
+
+data2012e<- sqldf("SELECT country as [Country], COUNT(country) as [NumberOfSchool] FROM df2012  GROUP BY country")
+# Most common genre
+data2012e %>% 
+  head(20) %>% 
+  hchart('pie', hcaes(x = Country, y = NumberOfSchool)) %>% 
+  hc_add_theme(hc_theme_google()) %>% 
+  hc_tooltip(pointFormat='<b>Proportion: </b> {point.percentage:,.2f}%') %>% 
+  hc_title(text = 'Percent numbers School of Country on total',
+           style = list(fontSize = '15px', fontWeight = 'bold'))
+
+```
+
+### {.no-padding data-height=3300}
+
+
+```{r}
+
+# Colors
+data2012f<- sqldf("SELECT country as [Country], SUM(patents) as [TotalPatents] FROM df2012  GROUP BY country")
+data2012f %>% 
+  head(20) %>% 
+  hchart('pie', hcaes(x = Country, y = TotalPatents)) %>% 
+  hc_add_theme(hc_theme_google()) %>% 
+  hc_tooltip(pointFormat='<b>Proportion: </b> {point.percentage:,.2f}%') %>% 
+  hc_title(text = 'Percent numbers Patent of Country on Total',
+           style = list(fontSize = '15px', fontWeight = 'bold'))
+
+```
+
+### {.no-padding data-height=3300}
+
+
+```{r}
+
+# Colors
+
+data2012g<- sqldf("SELECT institution as [Institution], average_rank as [AverageRank] FROM df2012  GROUP BY institution")
+# Most common genre
+data2012g %>% 
+  head(20) %>% 
+  hchart('pie', hcaes(x = Institution, y = AverageRank)) %>% 
+  hc_add_theme(hc_theme_google()) %>% 
+  hc_tooltip(pointFormat='<b>Proportion: </b> {point.percentage:,.2f}%') %>% 
+  hc_title(text = 'Percent Average Rank of School on Total',
+           style = list(fontSize = '15px', fontWeight = 'bold'))
+
+```
+
+2013 {data-orientation=rows}
+=======================================================================
+
+Column {.tabset .tabset-fade data-width=30000}
+-----------------------------------------------------------------------
+
+
+### TABLE DATA {data-height=4000}
+
+```{r}
+# This is going to be a datatable
+data2013d<- sqldf("SELECT institution as [Institution], country as [Country], national_rank as [NationalRank], quality_of_education as [QualityOfEducation], quality_of_faculty as [QualityOfFaculty], publications as [Publications], influence as [Influence], citations as [Citations], broad_impact as [BroadImpact], patents as [Patents], average_rank as [AverageRank],  world_rank as [WorldRank], score as [Score] FROM df2013 ")
+
+data2013d <- data2013d %>% 
+  arrange(-desc(WorldRank)) %>% 
+  select(Institution, Country,NationalRank,QualityOfEducation,QualityOfFaculty,Publications,Influence, Citations, BroadImpact,Patents, AverageRank, WorldRank, Score)
+
+# HTML table
+div(style = 'height:600px; overflow-y:scroll', gt(data2013d) %>% 
+      opt_table_font(font = list(google_font('Chivo'), default_fonts())) %>% 
+      tab_style(location = cells_column_labels(columns = everything()),
+                style = list(cell_borders(sides = 'bottom', 
+                                          weight = px(2)), 
+                             cell_text(weight = 'bold'))) %>% 
+      tab_options(table.font.size = px(12L),
+                  table.border.top.style = 'none',
+                  column_labels.border.bottom.width = 2,
+                  table_body.border.top.style = 'none',
+                  data_row.padding = px(3))
+    )
+
+```
+
+
+### TOTAL SCHOOLS ON COUNTRY {data-height=4000}
+
+```{r fig.height=5}
+# Colors
+custom_colors <- viridis::mako(n = 16)
+
+data2013a<- sqldf("SELECT country as [Country], COUNT(country) as [NumberOfSchool] FROM df2013  GROUP BY country")
+data2013a %>% 
+  group_by(Country) %>% 
+  arrange(desc(NumberOfSchool)) %>% 
+  head(16) %>% 
+  hchart('column', hcaes(x = Country, y = NumberOfSchool,color = custom_colors)) %>%   hc_add_theme(hc_theme_google()) %>% 
+  hc_tooltip(pointFormat = '<b>Number of School: </b> {point.y} <br>')
+
+```
+
+
+### TOTAL PATENTS ON COUNTRY {data-height=4000} 
+
+```{r fig.height=5}
+# Colors
+custom_colors <- viridis::plasma(n = 16)
+
+
+data2013b<- sqldf("SELECT country as [Country], SUM(patents) as [TotalPatents] FROM df2013  GROUP BY country")
+data2013b %>% 
+  arrange(-desc(TotalPatents)) %>% 
+  head(16) %>% 
+  hchart('bar', hcaes(x = Country, y = TotalPatents, color = custom_colors)) %>% 
+  hc_add_theme(hc_theme_google()) %>% 
+  hc_tooltip(pointFormat = '<b>Number of TotalPatents: </b> {point.y} <br>')
+
+```
+
+### TOP 20 AVERAGE RANK OF SCHOOL {data-height=4000}
+
+```{r fig.height=5}
+# Colors
+custom_colors <- viridis::plasma(n = 20)
+
+data2013c<- sqldf("SELECT institution as [Institution], average_rank as [AverageRank] FROM df2013  GROUP BY institution")
+data2013c %>% 
+  arrange(-desc(AverageRank)) %>% 
+  head(20) %>% 
+  hchart('bar', hcaes(x = Institution, y = AverageRank, color = custom_colors)) %>% 
+  hc_add_theme(hc_theme_google()) %>% 
+  hc_tooltip(pointFormat = '<b>Average Rank: </b> {point.y} <br>') 
+
+```
+
+
+### TOP 20 WORLD RANK OF SCHOOL {data-height=4000}
+
+```{r fig.height=5}
+# Colors
+custom_colors <- viridis::plasma(n = 20)
+
+data2013h<- sqldf("SELECT institution as [Institution], world_rank as [WorldRank] FROM df2013  GROUP BY institution")
+data2013h %>% 
+  arrange(-desc(WorldRank)) %>% 
+  head(20) %>% 
+  hchart('bar', hcaes(x = Institution, y = WorldRank, color = custom_colors)) %>% 
+  hc_add_theme(hc_theme_google()) %>% 
+  hc_tooltip(pointFormat = '<b>World Rank: </b> {point.y} <br>') 
+
+```
+
+### TOP 20 SCORE OF SCHOOL {data-height=4000}
+
+```{r fig.height=5}
+# Colors
+custom_colors <- viridis::plasma(n = 20)
+
+data2013j<- sqldf("SELECT institution as [Institution], score as [Score] FROM df2013  GROUP BY institution")
+data2013j %>% 
+  arrange(-desc(Score)) %>% 
+  head(20) %>% 
+  hchart('bar', hcaes(x = Institution, y = Score, color = custom_colors)) %>% 
+  hc_add_theme(hc_theme_google()) %>% 
+  hc_tooltip(pointFormat = '<b>Score: </b> {point.y} <br>')
+
+```
+
+
+Column {data-width=10000}
+-----------------------------------------------------------------------
+
+### {.no-padding data-height=3300}
+
+
+```{r}
+
+# Colors
+
+data2013e<- sqldf("SELECT country as [Country], COUNT(country) as [NumberOfSchool] FROM df2013  GROUP BY country")
+# Most common genre
+data2013e %>% 
+  head(20) %>% 
+  hchart('pie', hcaes(x = Country, y = NumberOfSchool)) %>% 
+  hc_add_theme(hc_theme_google()) %>% 
+  hc_tooltip(pointFormat='<b>Proportion: </b> {point.percentage:,.2f}%') %>% 
+  hc_title(text = 'Percent numbers School of Country on total',
+           style = list(fontSize = '15px', fontWeight = 'bold'))
+
+```
+
+### {.no-padding data-height=3300}
+
+
+```{r}
+
+# Colors
+data2013f<- sqldf("SELECT country as [Country], SUM(patents) as [TotalPatents] FROM df2013  GROUP BY country")
+data2013f %>% 
+  head(20) %>% 
+  hchart('pie', hcaes(x = Country, y = TotalPatents)) %>% 
+  hc_add_theme(hc_theme_google()) %>% 
+  hc_tooltip(pointFormat='<b>Proportion: </b> {point.percentage:,.2f}%') %>% 
+  hc_title(text = 'Percent numbers Patent of Country on Total',
+           style = list(fontSize = '15px', fontWeight = 'bold'))
+
+```
+
+### {.no-padding data-height=3300}
+
+
+```{r}
+
+# Colors
+
+data2013g<- sqldf("SELECT institution as [Institution], average_rank as [AverageRank] FROM df2013  GROUP BY institution")
+# Most common genre
+data2013g %>% 
+  head(20) %>% 
+  hchart('pie', hcaes(x = Institution, y = AverageRank)) %>% 
+  hc_add_theme(hc_theme_google()) %>% 
+  hc_tooltip(pointFormat='<b>Proportion: </b> {point.percentage:,.2f}%') %>% 
+  hc_title(text = 'Percent Average Rank of School on Total',
+           style = list(fontSize = '15px', fontWeight = 'bold'))
+
+```
+
+2014 {data-orientation=rows}
+=======================================================================
+
+Column {.tabset .tabset-fade data-width=30000}
+-----------------------------------------------------------------------
+
+
+### TABLE DATA {data-height=4000}
+
+```{r}
+# This is going to be a datatable
+data2014d<- sqldf("SELECT institution as [Institution], country as [Country], national_rank as [NationalRank], quality_of_education as [QualityOfEducation], quality_of_faculty as [QualityOfFaculty], publications as [Publications], influence as [Influence], citations as [Citations], broad_impact as [BroadImpact], patents as [Patents], average_rank as [AverageRank],  world_rank as [WorldRank], score as [Score] FROM df2014 ")
+
+data2014d <- data2014d %>% 
+  arrange(-desc(WorldRank)) %>% 
+  select(Institution, Country,NationalRank,QualityOfEducation,QualityOfFaculty,Publications,Influence, Citations, BroadImpact,Patents, AverageRank, WorldRank, Score)
+
+# HTML table
+div(style = 'height:600px; overflow-y:scroll', gt(data2014d) %>% 
+      opt_table_font(font = list(google_font('Chivo'), default_fonts())) %>% 
+      tab_style(location = cells_column_labels(columns = everything()),
+                style = list(cell_borders(sides = 'bottom', 
+                                          weight = px(2)), 
+                             cell_text(weight = 'bold'))) %>% 
+      tab_options(table.font.size = px(12L),
+                  table.border.top.style = 'none',
+                  column_labels.border.bottom.width = 2,
+                  table_body.border.top.style = 'none',
+                  data_row.padding = px(3))
+    )
+
+```
+
+
+### TOTAL SCHOOLS ON COUNTRY {data-height=4000}
+
+```{r fig.height=5}
+# Colors
+custom_colors <- viridis::mako(n = 16)
+
+data2014a<- sqldf("SELECT country as [Country], COUNT(country) as [NumberOfSchool] FROM df2014  GROUP BY country")
+data2014a %>% 
+  group_by(Country) %>% 
+  arrange(desc(NumberOfSchool)) %>% 
+  head(16) %>% 
+  hchart('column', hcaes(x = Country, y = NumberOfSchool,color = custom_colors)) %>%   hc_add_theme(hc_theme_google()) %>% 
+  hc_tooltip(pointFormat = '<b>Number of School: </b> {point.y} <br>')
+
+```
+
+
+### TOTAL PATENTS ON COUNTRY {data-height=4000} 
+
+```{r fig.height=5}
+# Colors
+custom_colors <- viridis::plasma(n = 16)
+
+
+data2014b<- sqldf("SELECT country as [Country], SUM(patents) as [TotalPatents] FROM df2014  GROUP BY country")
+data2014b %>% 
+  arrange(-desc(TotalPatents)) %>% 
+  head(16) %>% 
+  hchart('bar', hcaes(x = Country, y = TotalPatents, color = custom_colors)) %>% 
+  hc_add_theme(hc_theme_google()) %>% 
+  hc_tooltip(pointFormat = '<b>Number of TotalPatents: </b> {point.y} <br>')
+
+```
+
+### TOP 20 AVERAGE RANK OF SCHOOL {data-height=4000}
+
+```{r fig.height=5}
+# Colors
+custom_colors <- viridis::plasma(n = 20)
+
+data2014c<- sqldf("SELECT institution as [Institution], average_rank as [AverageRank] FROM df2014  GROUP BY institution")
+data2014c %>% 
+  arrange(-desc(AverageRank)) %>% 
+  head(20) %>% 
+  hchart('bar', hcaes(x = Institution, y = AverageRank, color = custom_colors)) %>% 
+  hc_add_theme(hc_theme_google()) %>% 
+  hc_tooltip(pointFormat = '<b>Average Rank: </b> {point.y} <br>') 
+
+```
+
+
+### TOP 20 WORLD RANK OF SCHOOL {data-height=4000}
+
+```{r fig.height=5}
+# Colors
+custom_colors <- viridis::plasma(n = 20)
+
+data2014h<- sqldf("SELECT institution as [Institution], world_rank as [WorldRank] FROM df2014  GROUP BY institution")
+data2014h %>% 
+  arrange(-desc(WorldRank)) %>% 
+  head(20) %>% 
+  hchart('bar', hcaes(x = Institution, y = WorldRank, color = custom_colors)) %>% 
+  hc_add_theme(hc_theme_google()) %>% 
+  hc_tooltip(pointFormat = '<b>World Rank: </b> {point.y} <br>') 
+
+```
+
+### TOP 20 SCORE OF SCHOOL {data-height=4000}
+
+```{r fig.height=5}
+# Colors
+custom_colors <- viridis::plasma(n = 20)
+
+data2014j<- sqldf("SELECT institution as [Institution], score as [Score] FROM df2014  GROUP BY institution")
+data2014j %>% 
+  arrange(-desc(Score)) %>% 
+  head(20) %>% 
+  hchart('bar', hcaes(x = Institution, y = Score, color = custom_colors)) %>% 
+  hc_add_theme(hc_theme_google()) %>% 
+  hc_tooltip(pointFormat = '<b>Score: </b> {point.y} <br>')
+
+```
+
+
+Column {data-width=10000}
+-----------------------------------------------------------------------
+
+### {.no-padding data-height=3300}
+
+
+```{r}
+
+# Colors
+
+data2014e<- sqldf("SELECT country as [Country], COUNT(country) as [NumberOfSchool] FROM df2014  GROUP BY country")
+# Most common genre
+data2014e %>% 
+  head(20) %>% 
+  hchart('pie', hcaes(x = Country, y = NumberOfSchool)) %>% 
+  hc_add_theme(hc_theme_google()) %>% 
+  hc_tooltip(pointFormat='<b>Proportion: </b> {point.percentage:,.2f}%') %>% 
+  hc_title(text = 'Percent numbers School of Country on total',
+           style = list(fontSize = '15px', fontWeight = 'bold'))
+
+```
+
+### {.no-padding data-height=3300}
+
+
+```{r}
+
+# Colors
+data2014f<- sqldf("SELECT country as [Country], SUM(patents) as [TotalPatents] FROM df2014  GROUP BY country")
+data2014f %>% 
+  head(20) %>% 
+  hchart('pie', hcaes(x = Country, y = TotalPatents)) %>% 
+  hc_add_theme(hc_theme_google()) %>% 
+  hc_tooltip(pointFormat='<b>Proportion: </b> {point.percentage:,.2f}%') %>% 
+  hc_title(text = 'Percent numbers Patent of Country on Total',
+           style = list(fontSize = '15px', fontWeight = 'bold'))
+
+```
+
+### {.no-padding data-height=3300}
+
+
+```{r}
+
+# Colors
+
+data2014g<- sqldf("SELECT institution as [Institution], average_rank as [AverageRank] FROM df2014  GROUP BY institution")
+# Most common genre
+data2014g %>% 
+  head(20) %>% 
+  hchart('pie', hcaes(x = Institution, y = AverageRank)) %>% 
+  hc_add_theme(hc_theme_google()) %>% 
+  hc_tooltip(pointFormat='<b>Proportion: </b> {point.percentage:,.2f}%') %>% 
+  hc_title(text = 'Percent Average Rank of School on Total',
+           style = list(fontSize = '15px', fontWeight = 'bold'))
+
+```
+
+
+2015 {data-orientation=rows}
+=======================================================================
+
+Column {.tabset .tabset-fade data-width=30000}
+-----------------------------------------------------------------------
+
+
+### TABLE DATA {data-height=4000}
+
+```{r}
+# This is going to be a datatable
+data2015d<- sqldf("SELECT institution as [Institution], country as [Country], national_rank as [NationalRank], quality_of_education as [QualityOfEducation], quality_of_faculty as [QualityOfFaculty], publications as [Publications], influence as [Influence], citations as [Citations], broad_impact as [BroadImpact], patents as [Patents], average_rank as [AverageRank],  world_rank as [WorldRank], score as [Score] FROM df2015 ")
+
+data2015d <- data2015d %>% 
+  arrange(-desc(WorldRank)) %>% 
+  select(Institution, Country,NationalRank,QualityOfEducation,QualityOfFaculty,Publications,Influence, Citations, BroadImpact,Patents, AverageRank, WorldRank, Score)
+
+# HTML table
+div(style = 'height:600px; overflow-y:scroll', gt(data2015d) %>% 
+      opt_table_font(font = list(google_font('Chivo'), default_fonts())) %>% 
+      tab_style(location = cells_column_labels(columns = everything()),
+                style = list(cell_borders(sides = 'bottom', 
+                                          weight = px(2)), 
+                             cell_text(weight = 'bold'))) %>% 
+      tab_options(table.font.size = px(12L),
+                  table.border.top.style = 'none',
+                  column_labels.border.bottom.width = 2,
+                  table_body.border.top.style = 'none',
+                  data_row.padding = px(3))
+    )
+
+```
+
+
+### TOTAL SCHOOLS ON COUNTRY {data-height=4000}
+
+```{r fig.height=5}
+# Colors
+custom_colors <- viridis::mako(n = 16)
+
+data2015a<- sqldf("SELECT country as [Country], COUNT(country) as [NumberOfSchool] FROM df2015  GROUP BY country")
+data2015a %>% 
+  group_by(Country) %>% 
+  arrange(desc(NumberOfSchool)) %>% 
+  head(16) %>% 
+  hchart('column', hcaes(x = Country, y = NumberOfSchool,color = custom_colors)) %>%   hc_add_theme(hc_theme_google()) %>% 
+  hc_tooltip(pointFormat = '<b>Number of School: </b> {point.y} <br>')
+
+```
+
+
+### TOTAL PATENTS ON COUNTRY {data-height=4000} 
+
+```{r fig.height=5}
+# Colors
+custom_colors <- viridis::plasma(n = 16)
+
+
+data2015b<- sqldf("SELECT country as [Country], SUM(patents) as [TotalPatents] FROM df2015  GROUP BY country")
+data2015b %>% 
+  arrange(-desc(TotalPatents)) %>% 
+  head(16) %>% 
+  hchart('bar', hcaes(x = Country, y = TotalPatents, color = custom_colors)) %>% 
+  hc_add_theme(hc_theme_google()) %>% 
+  hc_tooltip(pointFormat = '<b>Number of TotalPatents: </b> {point.y} <br>') 
+ 
+```
+
+### TOP 20 AVERAGE RANK OF SCHOOL {data-height=4000}
+
+```{r fig.height=5}
+# Colors
+custom_colors <- viridis::plasma(n = 20)
+
+data2015c<- sqldf("SELECT institution as [Institution], average_rank as [AverageRank] FROM df2015  GROUP BY institution")
+data2015c %>% 
+  arrange(-desc(AverageRank)) %>% 
+  head(20) %>% 
+  hchart('bar', hcaes(x = Institution, y = AverageRank, color = custom_colors)) %>% 
+  hc_add_theme(hc_theme_google()) %>% 
+  hc_tooltip(pointFormat = '<b>Average Rank: </b> {point.y} <br>') 
+
+```
+
+
+### TOP 20 WORLD RANK OF SCHOOL {data-height=4000}
+
+```{r fig.height=5}
+# Colors
+custom_colors <- viridis::plasma(n = 20)
+
+data2015h<- sqldf("SELECT institution as [Institution], world_rank as [WorldRank] FROM df2015  GROUP BY institution")
+data2015h %>% 
+  arrange(-desc(WorldRank)) %>% 
+  head(20) %>% 
+  hchart('bar', hcaes(x = Institution, y = WorldRank, color = custom_colors)) %>% 
+  hc_add_theme(hc_theme_google()) %>% 
+  hc_tooltip(pointFormat = '<b>World Rank: </b> {point.y} <br>') 
+
+```
+
+### TOP 20 SCORE OF SCHOOL {data-height=4000}
+
+```{r fig.height=5}
+# Colors
+custom_colors <- viridis::plasma(n = 20)
+
+data2015j<- sqldf("SELECT institution as [Institution], score as [Score] FROM df2015  GROUP BY institution")
+data2015j %>% 
+  arrange(-desc(Score)) %>% 
+  head(20) %>% 
+  hchart('bar', hcaes(x = Institution, y = Score, color = custom_colors)) %>% 
+  hc_add_theme(hc_theme_google()) %>% 
+  hc_tooltip(pointFormat = '<b>Score: </b> {point.y} <br>')
+
+```
+
+
+Column {data-width=10000}
+-----------------------------------------------------------------------
+
+### {.no-padding data-height=3300}
+
+
+```{r}
+
+# Colors
+
+data2015e<- sqldf("SELECT country as [Country], COUNT(country) as [NumberOfSchool] FROM df2015  GROUP BY country")
+# Most common genre
+data2015e %>% 
+  head(20) %>% 
+  hchart('pie', hcaes(x = Country, y = NumberOfSchool)) %>% 
+  hc_add_theme(hc_theme_google()) %>% 
+  hc_tooltip(pointFormat='<b>Proportion: </b> {point.percentage:,.2f}%') %>% 
+  hc_title(text = 'Percent numbers School of Country on total',
+           style = list(fontSize = '15px', fontWeight = 'bold'))
+
+```
+
+### {.no-padding data-height=3300}
+
+
+```{r}
+
+# Colors
+data2015f<- sqldf("SELECT country as [Country], SUM(patents) as [TotalPatents] FROM df2015  GROUP BY country")
+data2015f %>% 
+  head(20) %>% 
+  hchart('pie', hcaes(x = Country, y = TotalPatents)) %>% 
+  hc_add_theme(hc_theme_google()) %>% 
+  hc_tooltip(pointFormat='<b>Proportion: </b> {point.percentage:,.2f}%') %>% 
+  hc_title(text = 'Percent numbers Patent of Country on Total',
+           style = list(fontSize = '15px', fontWeight = 'bold'))
+
+```
+
+### {.no-padding data-height=3300}
+
+
+```{r}
+
+# Colors
+
+data2015g<- sqldf("SELECT institution as [Institution], average_rank as [AverageRank] FROM df2015  GROUP BY institution")
+# Most common genre
+data2015g %>% 
+  head(20) %>% 
+  hchart('pie', hcaes(x = Institution, y = AverageRank)) %>% 
+  hc_add_theme(hc_theme_google()) %>% 
+  hc_tooltip(pointFormat='<b>Proportion: </b> {point.percentage:,.2f}%') %>% 
+  hc_title(text = 'Percent Average Rank of School on Total',
+           style = list(fontSize = '15px', fontWeight = 'bold'))
+
+```
+
+
+
+
