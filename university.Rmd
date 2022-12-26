@@ -164,7 +164,7 @@ div(style = 'height:600px; overflow-y:scroll', gt(data2012d) %>%
 # Colors
 custom_colors <- viridis::mako(n = 16)
 
-data2012a<- sqldf("SELECT country as [Country], COUNT(country) as [NumberOfSchool] FROM df2012  GROUP BY country")
+data2012a<- sqldf("SELECT country as [Country], COUNT(institution) as [NumberOfSchool] FROM df2012  GROUP BY country")
 data2012a %>% 
   group_by(Country) %>% 
   arrange(desc(NumberOfSchool)) %>% 
@@ -251,7 +251,7 @@ Column {data-width=10000}
 
 # Colors
 
-data2012e<- sqldf("SELECT country as [Country], COUNT(country) as [NumberOfSchool] FROM df2012  GROUP BY country")
+data2012e<- sqldf("SELECT country as [Country], COUNT(institution) as [NumberOfSchool] FROM df2012  GROUP BY country")
 # Most common genre
 data2012e %>% 
   head(20) %>% 
@@ -339,7 +339,7 @@ div(style = 'height:600px; overflow-y:scroll', gt(data2013d) %>%
 # Colors
 custom_colors <- viridis::mako(n = 16)
 
-data2013a<- sqldf("SELECT country as [Country], COUNT(country) as [NumberOfSchool] FROM df2013  GROUP BY country")
+data2013a<- sqldf("SELECT country as [Country], COUNT(institution) as [NumberOfSchool] FROM df2013  GROUP BY country")
 data2013a %>% 
   group_by(Country) %>% 
   arrange(desc(NumberOfSchool)) %>% 
@@ -427,7 +427,7 @@ Column {data-width=10000}
 
 # Colors
 
-data2013e<- sqldf("SELECT country as [Country], COUNT(country) as [NumberOfSchool] FROM df2013  GROUP BY country")
+data2013e<- sqldf("SELECT country as [Country], COUNT(institution) as [NumberOfSchool] FROM df2013  GROUP BY country")
 # Most common genre
 data2013e %>% 
   head(20) %>% 
@@ -515,7 +515,7 @@ div(style = 'height:600px; overflow-y:scroll', gt(data2014d) %>%
 # Colors
 custom_colors <- viridis::mako(n = 16)
 
-data2014a<- sqldf("SELECT country as [Country], COUNT(country) as [NumberOfSchool] FROM df2014  GROUP BY country")
+data2014a<- sqldf("SELECT country as [Country], COUNT(institution) as [NumberOfSchool] FROM df2014  GROUP BY country")
 data2014a %>% 
   group_by(Country) %>% 
   arrange(desc(NumberOfSchool)) %>% 
@@ -603,7 +603,7 @@ Column {data-width=10000}
 
 # Colors
 
-data2014e<- sqldf("SELECT country as [Country], COUNT(country) as [NumberOfSchool] FROM df2014  GROUP BY country")
+data2014e<- sqldf("SELECT country as [Country], COUNT(institution) as [NumberOfSchool] FROM df2014  GROUP BY country")
 # Most common genre
 data2014e %>% 
   head(20) %>% 
@@ -692,7 +692,7 @@ div(style = 'height:600px; overflow-y:scroll', gt(data2015d) %>%
 # Colors
 custom_colors <- viridis::mako(n = 16)
 
-data2015a<- sqldf("SELECT country as [Country], COUNT(country) as [NumberOfSchool] FROM df2015  GROUP BY country")
+data2015a<- sqldf("SELECT country as [Country], COUNT(institution) as [NumberOfSchool] FROM df2015  GROUP BY country")
 data2015a %>% 
   group_by(Country) %>% 
   arrange(desc(NumberOfSchool)) %>% 
@@ -780,7 +780,7 @@ Column {data-width=10000}
 
 # Colors
 
-data2015e<- sqldf("SELECT country as [Country], COUNT(country) as [NumberOfSchool] FROM df2015  GROUP BY country")
+data2015e<- sqldf("SELECT country as [Country], COUNT(institution) as [NumberOfSchool] FROM df2015  GROUP BY country")
 # Most common genre
 data2015e %>% 
   head(20) %>% 
